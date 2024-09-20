@@ -9,3 +9,11 @@ The secondary point of this was to demonstrate a Java web server that boots up q
 This still uses Maven, which is inexcusably slow (Gradle is worse) but one thing at a time...
 
 ## How to Run
+
+Requirements are Java 8 or so, and Maven.
+
+The quickest way to run is:
+
+    ./example/run.sh
+
+You can also try using a run.bat in same directory. Build creates an executable jar so things are pretty easy.
