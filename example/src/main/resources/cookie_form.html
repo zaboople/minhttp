@@ -1,0 +1,17 @@
+
+    <br><br>
+    <a href="/cookies?random">Set a random cookie</a><br><br>
+
+    <form action='/cookies' method='post'>
+        <input type="hidden" name="clear" value="clear"/>
+        <button>Clear Cookies</button>
+    </form>
+    <form action='/cookies' method='post'
+        style="background-color:#EEFFEE; padding:1px 200px 1px 10px; margin:0px 50% 0px 10px">
+      <p>Add cookie</p>
+      <p>What to call it: <input type='text' name='name'/>
+      <p>What to put in it: <input type='text' name='value'/>
+      <p><button>Submit</button>
+    </form>
+    <br><br>
+    <a href="cookies">Refresh</a>

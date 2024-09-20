@@ -1,0 +1,21 @@
+<script>
+    function doSubmit() {
+        console.log("Sending...");
+        var x=new XMLHttpRequest();
+        x.addEventListener("load", function(res){
+            console.log("Hmph "+this.responseText);
+            document.getElementById("mytext").innerHtml="fuck"
+            document.getElementById("mytext").value=this.responseText
+        });
+        x.open("POST", "/json")
+        x.setRequestHeader("Content-Type", "application/json;charset=utf-8")
+        x.send(document.getElementById("mytext").value)
+    }
+</script>
+<p>Put some JSON in the box below and click send: </p>
+<textarea id="mytext" style="width:350px; height:350px">
+["-> ☃☃☃☃☃ <-", "日本語"]
+</textarea>
+<p>
+<button onclick="doSubmit()" style="padding:10px 30px 10px 30px"/>Send</button>
+

@@ -1,0 +1,14 @@
+I want to add a class that can
+
+    getString(name)
+        Should probably check to see if encoded form in which case...
+    getStringOpt
+    getStrings
+    getStringsOpt
+    Ditto for long, integer, Date,
+    getZonedDateTime(name, format)
+    getZonedDateTime(name, format, TimeZone)
+    getDate(" " "....
+    getDateOpt...
+    getJson
+        needs to check mime type for encoded or not
