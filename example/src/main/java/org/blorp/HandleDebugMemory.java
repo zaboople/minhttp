@@ -90,12 +90,15 @@ public class HandleDebugMemory {
     private static void print(Writer writer, String name, MemoryUsage mu) {
         Except.run(()->{
             writer.append("<tr><td>").append(name);
-            long init=mu.getInit(), used=mu.getUsed(), commit=mu.getCommitted(), max=mu.getMax();
+            final long init=mu.getInit(), used=mu.getUsed(),
+                commit=mu.getCommitted(), max=mu.getMax();
             writer.append(
                 String.format(
                     "<td> %,d <td> %,d <td> %,d <td> %,d </tr>",
                     ifdef(
-                        number -> number==-1 ?-1 :number/1024L,
+                        number -> number==-1
+                            ?-1
+                            :number/1024L,
                         init, used, commit, max
                     )
                 )
@@ -103,8 +106,8 @@ public class HandleDebugMemory {
         });
     }
 
-    private static Long[] ifdef(LongFunction<Long> lf, long... nums) {
-        Long[] result=new Long[nums.length];
+    private static Object[] ifdef(LongFunction<Long> lf, long... nums) {
+        Object[] result=new Object[nums.length];
         for (int i=0; i<nums.length; i++)
             result[i]=lf.apply(nums[i]);
         return result;
