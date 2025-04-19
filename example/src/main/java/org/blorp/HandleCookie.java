@@ -1,16 +1,12 @@
 package org.blorp;
 
-import java.util.UUID;
+import java.util.*;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Cookie;
 
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
-
-import org.minhttp.HTree;
-import org.minhttp.HTreeNode;
-import org.minhttp.MyHandler;
 
 /**
  * Sets up cookies
@@ -22,12 +18,8 @@ public class HandleCookie {
         this.templates=templates;
     }
 
-    public MyHandler getHandler() {
-        return (req, resp, elems)-> handle(req, resp);
-    }
-
-    private void handle(
-            HttpServletRequest req, HttpServletResponse resp
+    public void handle(
+            HttpServletRequest req, HttpServletResponse resp, List<String> path
         ) throws Exception {
         boolean post=req.getMethod().equals("POST");
         if (post){

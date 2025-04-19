@@ -39,7 +39,6 @@ public class Main {
             }
         }
         ((Logger)LoggerFactory.getLogger("ROOT")).setLevel(Level.INFO);
-        ((Logger)LoggerFactory.getLogger("org.minhttp")).setLevel(Level.DEBUG);
         new Root(port, dir).start();
     }
 }

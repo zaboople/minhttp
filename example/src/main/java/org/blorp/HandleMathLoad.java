@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
-import org.minhttp.HTreeNode;
+import org.minhttp.Handlers;
 
 /** This was made primarily for load testing by doing some kind of silly "work". */
 public class HandleMathLoad {
@@ -15,19 +15,14 @@ public class HandleMathLoad {
     private final static Logger logger=LoggerFactory.getLogger(HandleMathLoad.class);
     private final static SecureRandom randomizer=new SecureRandom();
 
-    public static void addTo(HTreeNode tree, Templates templates) {
-        tree.put(
-            "some", (req, resp, elems)->
-                templates.wrap(resp, w->print(req, w, 32, 64))
-        );
-        tree.put(
-            "more", (req, resp, elems)->
-                templates.wrap(resp, w->print(req, w))
-        );
-        tree.put(
-            "lots", (req, resp, elems)->
-                templates.wrap(resp, w->printIframes(w))
-        );
+    public static void addTo(Handlers hdl, Templates templates) {
+        hdl.add("GET", "/math/some", (req, resp, elems)->
+                templates.wrap(resp, w->print(req, w, 32, 64)))
+            .add("GET", "/math/more",  (req, resp, elems)->
+                templates.wrap(resp, w->print(req, w)))
+            .add("GET", "/math/lots", (req, resp, elems)->
+                templates.wrap(resp, w->printIframes(w)))
+            ;
     }
 
     private static void print(

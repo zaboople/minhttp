@@ -4,7 +4,7 @@ import java.io.Writer;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.minhttp.HTreeNode;
+import org.minhttp.Handlers;
 
 /**
  * This tests out my wildcard path values on http://host/A/_/B/_/C/
@@ -14,28 +14,19 @@ import org.minhttp.HTreeNode;
 public class HandleDataInPath {
     private final static String[] nodes={"A", "B", "C", "D", "E", "F", "G", "H"};
     private final Templates templates;
-    public HandleDataInPath(HTreeNode tree, Templates t){
+    public HandleDataInPath(Handlers tree, Templates t){
         this.templates=t;
-        tree.create("A")
-            .create()
-            .create("B")
-            .create((req, resp, elems)-> print(resp, elems))
-            .create("C")
-            .create((req, resp, elems)-> print(resp, elems))
-            .create("D")
-            .create((req, resp, elems)-> print(resp, elems))
-            .create("E")
-            .create((req, resp, elems)-> print(resp, elems))
-            .create("F")
-            .create((req, resp, elems)-> print(resp, elems))
-            .create("G")
-            .create((req, resp, elems)-> print(resp, elems))
-            .create("H")
-            .create((req, resp, elems)-> print(resp, elems))
+        tree.add("GET", "/data/A/*/B/*", this::print)
+            .add("GET", "/data/A/*/B/*/C/*", this::print)
+            .add("GET", "/data/A/*/B/*/C/*/D/*", this::print)
+            .add("GET", "/data/A/*/B/*/C/*/D/*/E/*", this::print)
+            .add("GET", "/data/A/*/B/*/C/*/D/*/E/*/F/*", this::print)
+            .add("GET", "/data/A/*/B/*/C/*/D/*/E/*/F/*/G/*", this::print)
+            .add("GET", "/data/A/*/B/*/C/*/D/*/E/*/F/*/G/*/H/*", this::print)
             ;
     }
 
-    private final void print(HttpServletResponse r, List<String> elems) {
+    private final void print(HttpServletRequest req, HttpServletResponse r, List<String> elems) {
         templates.wrap(r, writer->{
             int len=elems.size();
             if (elems.size() > 2)

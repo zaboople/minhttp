@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
-import org.minhttp.MyHandler;
+import org.minhttp.Handlers;
 
 /** Attempts to get some halfway decent memory stats. */
 public class HandleDebugMemory {
@@ -20,7 +20,7 @@ public class HandleDebugMemory {
         this.templates = t;
     }
 
-    public MyHandler getHandler() {
+    public Handlers.MyHandler getHandler() {
         return (req, resp, path)-> templates.wrap(resp, w -> print(w));
     }
 

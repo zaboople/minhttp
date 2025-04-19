@@ -12,8 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
 import org.minhttp.MultipartHandler;
-import org.minhttp.HTree;
-import org.minhttp.HTreeJettyHandler;
+import org.minhttp.Handlers;
 
 /**
  *  This starts up a web server.
@@ -33,7 +32,7 @@ public class Root {
         templates=new Templates(resources);
         // Build up AbstractHandler layers in reverse, to create:
         // GzipHandler -> MultipartHandler -> HTreeJettyHandler
-        AbstractHandler treeHandler=new HTreeJettyHandler(getTree());
+        AbstractHandler treeHandler=getHandlers();
         AbstractHandler multiPartHandler=new MultipartHandler(treeHandler);
         GzipHandler gzipHandler = new GzipHandler();
         gzipHandler.setIncludedMimeTypes(
@@ -52,37 +51,36 @@ public class Root {
         server.join();
     }
 
-    /** Builds the tree of path->handler relations. */
-    private HTree getTree() {
-        HTree tree=new HTree(
-            (req, resp, path)->
-                handleNotFound(resp),
-            (req, resp, path, exception)->
-                handleInternalError(req, resp, exception),
-            (req, resp, path)->
-                filter(req, resp, path)
-        );
-        tree.create("ui").all(templates.getHandler());
-        tree
-            .put("",              (req, resp, path)-> templates.wrapFile(req, resp, "/menu.html"))
-            .put("splode",        (req, resp, path)-> {throw new Exception("On purpose");})
-            .put("cookies",       new HandleCookie(templates).getHandler())
-            .put("memory",        new HandleDebugMemory(templates).getHandler())
-            .put("x-favicon.ico", new HandleFavIcon(resources).getHandler())
-            .put("favicon.ico",   new HandleFavIcon(resources).getHandler())
-            .put("json",          new HandleJson().getHandler())
-            .put("headers",       new HandleDebugRequest().getHandler(templates))
+    private Handlers getHandlers() {
+        Handlers hdl = new Handlers();
+        hdl.add("GET", "/", (req, resp, path)-> templates.wrapFile(req, resp, "/menu.html"))
+            .add("GET",  "/x-favicon.ico", new HandleFavIcon(resources)::handle)
+            .add("GET",  "/favicon.ico",   new HandleFavIcon(resources)::handle)
+            .add("GET",  "/ui/**", templates.getHandler())
+            .add("GET",  "/exit", (req, resp, elems) -> {
+                java.io.Writer w = resp.getWriter();
+                w.write("*** Hi! I am Exiting... bye... ***");
+                w.flush();
+                w.close();
+                System.exit(0);
+            })
+            .add("GET",      "/splode",        (req, resp, path)-> {throw new Exception("On purpose");})
+            .add("GET,POST", "/cookies",       new HandleCookie(templates)::handle)
+            .add("GET",      "/memory",        new HandleDebugMemory(templates).getHandler())
+            .add("GET,POST", "/headers",       new HandleDebugRequest().getHandler(templates))
+            .add("GET,POST", "/json",          HandleJson::handle)
             ;
-        HandleMathLoad.addTo(tree.create("math"), templates);
-        new HandleDataInPath(tree.create("data"), templates);
-        return tree;
+        HandleMathLoad.addTo(hdl, templates);
+        new HandleDataInPath(hdl, templates);
+        hdl.setErrorHandler(this::handleInternalError);
+        return hdl;
     }
 
     private void handleNotFound(HttpServletResponse resp) throws Exception {
         resp.setStatus(404);
         templates.wrap(resp, w->w.println("Not found!"));
     }
-    private void handleInternalError(HttpServletRequest req, HttpServletResponse resp, Exception e){
+    private void handleInternalError(HttpServletRequest req, HttpServletResponse resp, String path, Exception e){
         try {
             logger.error("Internal error: "+e, e);
             resp.setStatus(500);
@@ -96,6 +94,6 @@ public class Root {
         }
     }
     private void filter(HttpServletRequest req, HttpServletResponse resp, List<String> wildcards){
-        logger.info("Filtering...");
+        //logger.info("Filtering...");
     }
 }

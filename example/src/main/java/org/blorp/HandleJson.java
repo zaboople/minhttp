@@ -9,18 +9,13 @@ import org.json.*;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
-import org.minhttp.MyHandler;
 
 public class HandleJson {
     private final static Logger logger = LoggerFactory.getLogger(HandleJson.class);
     static int count=0;
 
-    public MyHandler getHandler() {
-        return (req, resp, path)-> in(req, resp);
-    }
-
-    private static void in(
-          HttpServletRequest req, HttpServletResponse resp
+    public static void handle(
+          HttpServletRequest req, HttpServletResponse resp, List<String> path
         ) throws Exception {
         final String method=req.getMethod();
         for (String value: Collections.list(req.getHeaders("User-Agent")))

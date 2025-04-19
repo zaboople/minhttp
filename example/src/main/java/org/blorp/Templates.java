@@ -15,7 +15,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
-import org.minhttp.MyHandler;
+import org.minhttp.Handlers;
 
 public class Templates {
     private final Logger logger=LoggerFactory.getLogger(getClass());
@@ -26,7 +26,7 @@ public class Templates {
         resources=r;
         headerFooter=getHeaderFooter();
     }
-    public MyHandler getHandler() {
+    public Handlers.MyHandler getHandler() {
         return (req, resp, elems)-> {
             String path="/ui/"+elems.stream().collect(Collectors.joining("/"));
             try {

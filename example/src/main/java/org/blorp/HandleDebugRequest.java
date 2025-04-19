@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
-import org.minhttp.MyHandler;
+import org.minhttp.Handlers;
 
 /**
     Prints information about the HTTP request back to the browser. Attempts to avoid
@@ -23,7 +23,7 @@ import org.minhttp.MyHandler;
 public class HandleDebugRequest {
     private final static String rtn="<br>\n";
 
-    public MyHandler getHandler(Templates templates) {
+    public Handlers.MyHandler getHandler(Templates templates) {
         return (req, resp, elems)->
             templates.wrap(resp, writer ->print(req, writer));
     }

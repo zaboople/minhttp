@@ -67,6 +67,37 @@ public class Resources {
                 return getClass().getResource(name);
         });
     }
-
+    public static String getFileDataString(URL url) {
+        if (url==null)
+            throw new RuntimeException("URL is null");
+         return Except.get(()->{
+            StringBuilder result = new StringBuilder();
+            try (
+                InputStream istr = url.openStream();
+                InputStreamReader reader=new InputStreamReader(istr, UTF_8);
+                BufferedReader br=new BufferedReader(reader)
+                ) {
+                String s;
+                while ((s=br.readLine())!=null)
+                    result.append(s).append("\n");
+            }
+            return result.toString();
+        });
+   }
+   public static String getInputStreamString(InputStream stream) {
+        return Except.get(()->{
+            StringBuilder writer = new StringBuilder();
+            try (InputStreamReader reader=new InputStreamReader(stream, UTF_8)) {
+                boolean hasData=false;
+                char[] buffer=new char[1024];
+                int readed=0;
+                while ((readed=reader.read(buffer, 0, buffer.length))>0){
+                    String s=new String(buffer, 0, readed);
+                    writer.append(s);
+                }
+            }
+            return writer.toString();
+        });
+   }
 
 }
