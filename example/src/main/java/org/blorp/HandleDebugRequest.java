@@ -14,8 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
-import org.minhttp.Handlers;
-
 /**
     Prints information about the HTTP request back to the browser. Attempts to avoid
     printing sensitive information such as the Authorization & Cookie headers.

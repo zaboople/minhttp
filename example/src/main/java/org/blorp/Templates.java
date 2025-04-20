@@ -5,11 +5,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
-import org.minhttp.Handlers;
 import org.minhttp.IOStuff;
 
 public class Templates {
