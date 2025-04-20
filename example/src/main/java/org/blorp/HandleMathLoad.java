@@ -15,14 +15,18 @@ public class HandleMathLoad {
     private final static Logger logger=LoggerFactory.getLogger(HandleMathLoad.class);
     private final static SecureRandom randomizer=new SecureRandom();
 
-    public static void addTo(Handlers hdl, Templates templates) {
-        hdl.add("GET", "/math/some", (req, resp, elems)->
-                templates.wrap(resp, w->print(req, w, 32, 64)))
-            .add("GET", "/math/more",  (req, resp, elems)->
-                templates.wrap(resp, w->print(req, w)))
-            .add("GET", "/math/lots", (req, resp, elems)->
-                templates.wrap(resp, w->printIframes(w)))
-            ;
+    public static void addTo(Handlers hdl, Templates templates, String rootPath) {
+        hdl.add(
+                "GET", rootPath + "/some",
+                (req, resp, elems)-> templates.wrap(resp, w->print(req, w, 32, 64))
+            )
+            .add(
+                "GET", rootPath + "/more",
+                (req, resp, elems)-> templates.wrap(resp, w->print(req, w))
+            )
+            .add("GET", rootPath + "/lots",
+                (req, resp, elems)-> templates.wrap(resp, w->printIframes(w))
+            );
     }
 
     private static void print(

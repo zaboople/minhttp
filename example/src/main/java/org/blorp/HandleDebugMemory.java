@@ -10,8 +10,8 @@ import java.util.function.LongFunction;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
-
-import org.minhttp.Handlers;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletRequest;
 
 /** Attempts to get some halfway decent memory stats. */
 public class HandleDebugMemory {
@@ -20,8 +20,10 @@ public class HandleDebugMemory {
         this.templates = t;
     }
 
-    public Handlers.MyHandler getHandler() {
-        return (req, resp, path)-> templates.wrap(resp, w -> print(w));
+    public void handle(
+            HttpServletRequest req, HttpServletResponse res, List<String> pathElems
+        ) {
+        templates.wrap(res, this::print);
     }
 
     private void print(Writer writer) throws Exception {

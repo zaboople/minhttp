@@ -10,7 +10,6 @@ import org.eclipse.jetty.server.handler.gzip.GzipHandler;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
-
 import org.minhttp.MultipartHandler;
 import org.minhttp.Handlers;
 
@@ -30,6 +29,7 @@ public class Root {
     public Root(int port, String baseDirectory) throws Exception {
         resources=new Resources(baseDirectory);
         templates=new Templates(resources);
+
         // Build up AbstractHandler layers in reverse, to create:
         // GzipHandler -> MultipartHandler -> HTreeJettyHandler
         AbstractHandler treeHandler=getHandlers();
@@ -53,25 +53,19 @@ public class Root {
 
     private Handlers getHandlers() {
         Handlers hdl = new Handlers();
-        hdl.add("GET", "/", (req, resp, path)-> templates.wrapFile(req, resp, "/menu.html"))
-            .add("GET",  "/x-favicon.ico", new HandleFavIcon(resources)::handle)
-            .add("GET",  "/favicon.ico",   new HandleFavIcon(resources)::handle)
-            .add("GET",  "/ui/**", templates.getHandler())
-            .add("GET",  "/exit", (req, resp, elems) -> {
-                java.io.Writer w = resp.getWriter();
-                w.write("*** Hi! I am Exiting... bye... ***");
-                w.flush();
-                w.close();
-                System.exit(0);
-            })
-            .add("GET",      "/splode",        (req, resp, path)-> {throw new Exception("On purpose");})
+        hdl.add("GET",       "/",              templates::handleRootPath)
+            .add("GET",      "/ui/**",         templates::handleUIPath)
+            .add("GET",      "/x-favicon.ico", new HandleFavIcon(resources)::handle)
+            .add("GET",      "/favicon.ico",   new HandleFavIcon(resources)::handle)
             .add("GET,POST", "/cookies",       new HandleCookie(templates)::handle)
-            .add("GET",      "/memory",        new HandleDebugMemory(templates).getHandler())
-            .add("GET,POST", "/headers",       new HandleDebugRequest().getHandler(templates))
+            .add("GET",      "/memory",        new HandleDebugMemory(templates)::handle)
+            .add("GET,POST", "/headers",       new HandleDebugRequest(templates)::handle)
             .add("GET,POST", "/json",          HandleJson::handle)
+            .add("GET",      "/exit",          HandleExit::handle)
+            .add("GET",      "/splode",        (req, resp, path)-> {throw new Exception("On purpose");})
             ;
-        HandleMathLoad.addTo(hdl, templates);
-        new HandleDataInPath(hdl, templates);
+        HandleMathLoad.addTo(hdl, templates, "/math");
+        new HandleDataInPath(hdl, templates, "/data");
         hdl.setErrorHandler(this::handleInternalError);
         return hdl;
     }

@@ -14,15 +14,15 @@ import org.minhttp.Handlers;
 public class HandleDataInPath {
     private final static String[] nodes={"A", "B", "C", "D", "E", "F", "G", "H"};
     private final Templates templates;
-    public HandleDataInPath(Handlers tree, Templates t){
+    public HandleDataInPath(Handlers tree, Templates t, String rootPath){
         this.templates=t;
-        tree.add("GET", "/data/A/*/B/*", this::print)
-            .add("GET", "/data/A/*/B/*/C/*", this::print)
-            .add("GET", "/data/A/*/B/*/C/*/D/*", this::print)
-            .add("GET", "/data/A/*/B/*/C/*/D/*/E/*", this::print)
-            .add("GET", "/data/A/*/B/*/C/*/D/*/E/*/F/*", this::print)
-            .add("GET", "/data/A/*/B/*/C/*/D/*/E/*/F/*/G/*", this::print)
-            .add("GET", "/data/A/*/B/*/C/*/D/*/E/*/F/*/G/*/H/*", this::print)
+        tree.add("GET", rootPath + "/A/*/B/*", this::print)
+            .add("GET", rootPath + "/A/*/B/*/C/*", this::print)
+            .add("GET", rootPath + "/A/*/B/*/C/*/D/*", this::print)
+            .add("GET", rootPath + "/A/*/B/*/C/*/D/*/E/*", this::print)
+            .add("GET", rootPath + "/A/*/B/*/C/*/D/*/E/*/F/*", this::print)
+            .add("GET", rootPath + "/A/*/B/*/C/*/D/*/E/*/F/*/G/*", this::print)
+            .add("GET", rootPath + "/A/*/B/*/C/*/D/*/E/*/F/*/G/*/H/*", this::print)
             ;
     }
 

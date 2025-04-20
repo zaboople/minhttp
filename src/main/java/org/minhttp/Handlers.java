@@ -10,11 +10,19 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** Allows one to map URL paths to lambda functions. */
 public class Handlers extends AbstractHandler {
 
+    /** Interface for handling HTTP requests to a specific path */
     public @FunctionalInterface static interface MyHandler {
+        /** Called for each request to a specific path
+            @param req Standard servlet request
+            @param resp Standard servlet response
+            @param pathValues Wildcard values from URL, in order
+        */
         public void handle(HttpServletRequest req, HttpServletResponse resp, List<String> pathValues) throws Exception;
     }
+
     public @FunctionalInterface static interface ErrorHandler {
         public void handle(HttpServletRequest req, HttpServletResponse resp, String path, Exception ex);
     }
@@ -22,6 +30,7 @@ public class Handlers extends AbstractHandler {
     private final TreeNode rootNode = new TreeNode();
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private ErrorHandler errorHandler;
+
     private static class TreeNode {
         Map<String, TreeNode> children;
         Map<String, MyHandler> handlers;
@@ -34,12 +43,15 @@ public class Handlers extends AbstractHandler {
     ////////////
 
     /**
-        For path, you can use "*" for wildcards and "**" for a wildcard that handles
-        all paths below the specified one
+        Adds a handler for a given URI path.
+        @param method Any of the standard HTTP methods, upper or lowercase.
+        @param path Use "*" for wildcards and "**" for a wildcard that handles
+            all paths below the specified one
+        @param handler Will be called when the path is matched.
     */
-    public Handlers add(String method, String path, MyHandler mh) {
+    public Handlers add(String method, String path, MyHandler handler) {
         for (String meth: method.split(","))
-            doAdd(meth, path, mh);
+            doAdd(meth, path, handler);
         return this;
     }
     private Handlers doAdd(String method, String path, MyHandler mh) {

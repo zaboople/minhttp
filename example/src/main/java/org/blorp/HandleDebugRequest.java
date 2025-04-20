@@ -22,10 +22,13 @@ import org.minhttp.Handlers;
  */
 public class HandleDebugRequest {
     private final static String rtn="<br>\n";
+    private final Templates templates;
+    public HandleDebugRequest(Templates templates) {this.templates=templates;}
 
-    public Handlers.MyHandler getHandler(Templates templates) {
-        return (req, resp, elems)->
-            templates.wrap(resp, writer ->print(req, writer));
+    public void handle(
+            HttpServletRequest req, HttpServletResponse res, List<String> pathElems
+        ) {
+        templates.wrap(res, writer -> print(req, writer));
     }
 
     private static void print(HttpServletRequest request, Writer writer) throws Exception {
